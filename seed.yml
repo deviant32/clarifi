@@ -1,3 +1,4 @@
 before_build:
-  - cd /var/task/dist/apps/api && npm install
   - npx nx build api
+after_build:
+  - cd /var/task/dist/apps/api && npm install
