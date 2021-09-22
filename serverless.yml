@@ -15,13 +15,13 @@ plugins:
 package:
   individually: true
   include:
-    - src/apps/api/**
+    - apps/src/api/**
   exclude:
     - '**'
 
 functions:
   index:
-    handler: src/apps/api/main.handler
+    handler: apps/src/api/main.handler
     events:
     - http:
         cors: true
