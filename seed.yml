@@ -1,4 +1,4 @@
 before_build:
   - npx nx build api
-after_build:
+before_deploy:
   - cd /var/task/dist/apps/api && npm install
