@@ -1,3 +1,0 @@
-before_build:
-  - npx nx build api
-

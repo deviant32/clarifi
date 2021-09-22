@@ -7,6 +7,11 @@ provider:
   region: us-east-1
   profile: default
 
+plugins:
+  - 'serverless-plugin-typescript'
+  - serverless-plugin-optimize
+  - serverless-offline
+
 package:
   individually: true
   include:
