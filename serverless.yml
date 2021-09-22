@@ -1,20 +1,11 @@
 service: clarifi-api
 
-custom:
-  prune:
-    automatic: true
-    number: 3
-  serverless-layers:
-    dependenciesPath: ./package.json
 
 provider:
   name: aws
   runtime: nodejs12.x
   region: us-east-1
   profile: default
-  stage: development
-plugins:
-  - serverless-layers
 
 package:
   individually: true
