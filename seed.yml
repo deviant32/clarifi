@@ -1,2 +1,2 @@
-before_deploy:
-  - npx build api
+before_build:
+  - npx nx build api
