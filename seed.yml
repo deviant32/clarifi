@@ -1,3 +1,3 @@
 before_build:
-  - cd /dist/apps/api && npm install
+  - cd dist/apps/api && npm install
   - npx nx build api
