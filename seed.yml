@@ -1,4 +1,4 @@
-before_build:
-  - npx nx build api
-before_deploy:
-  - cd dist/apps/api && npm install
+#before_build:
+#  - npx nx build api
+#before_deploy:
+#  - cd dist/apps/api && npm install

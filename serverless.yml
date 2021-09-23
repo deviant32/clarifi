@@ -16,7 +16,7 @@ package:
 
 functions:
   index:
-    handler: apps/src/api/main.handler
+    handler: apps/api/src/main.handler
     events:
     - http:
         cors: true
