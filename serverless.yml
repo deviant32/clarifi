@@ -5,6 +5,8 @@ provider:
   runtime: nodejs12.x
   region: us-east-1
   profile: personal
+  environment:
+    API_URL: { "Fn::Join" : ["", [" https://", { "Ref" : "ApiGatewayRestApi" }, ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}" ] ]  }
 
 plugins:
   - serverless-single-page-app-plugin
@@ -17,7 +19,6 @@ package:
     - dist/apps/api/**
   exclude:
     - '**'
-
 
 custom:
   s3LocalPath: dist/apps/clarifi
@@ -37,19 +38,18 @@ custom:
         layersDeploymentBucket: clarifi-layers
         dependenciesPath: dist/apps/api/package.json
 
-
 functions:
   index:
     handler: dist/apps/api/main.handler
     events:
-    - http:
-        cors: true
-        path: '/'
-        method: any
-    - http:
-        cors: true
-        path: '{proxy+}'
-        method: any
+      - http:
+          cors: true
+          path: '/'
+          method: any
+      - http:
+          cors: true
+          path: '{proxy+}'
+          method: any
 
 resources:
   Resources:
