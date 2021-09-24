@@ -159,7 +159,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/clarifi-api/dev/1632490835059-2021-09-24T13:40:35.059Z/index.zip"
+                "S3Key": "serverless/clarifi-api/dev/1632499610683-2021-09-24T16:06:50.683Z/index.zip"
               },
               "FunctionName": "clarifi-api-dev-index",
               "Handler": "dist/apps/api/main.handler",
@@ -181,14 +181,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "IndexLambdaVersionRrsBCHIVWH0eX8mkWcXBGZolp91M5pjLRxBgJQZks": {
+          "IndexLambdaVersion71DVSbbN2wl0AEso202qjerQNSLtf8KelopDF0I8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "IndexLambdaFunction"
               },
-              "CodeSha256": "6Owej9AlCFZmEAm+KUh73lCLJKoalObDk9A1qexxsbQ="
+              "CodeSha256": "dzKPz94XgnjG9JlKDxdb8kHP/SuJTssNLCuKNtKlv/U="
             }
           },
           "ApiGatewayRestApi": {
@@ -400,7 +400,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1632490765818": {
+          "ApiGatewayDeployment1632499551020": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -451,6 +451,107 @@
                 ]
               }
             }
+          },
+          "WebAppS3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "AccessControl": "PublicRead",
+              "WebsiteConfiguration": {
+                "IndexDocument": "index.html",
+                "ErrorDocument": "index.html"
+              }
+            }
+          },
+          "WebAppS3BucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "WebAppS3Bucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Sid": "PublicReadGetObject",
+                    "Effect": "Allow",
+                    "Principal": "*",
+                    "Action": [
+                      "s3:GetObject"
+                    ],
+                    "Resource": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:aws:s3:::",
+                          {
+                            "Ref": "WebAppS3Bucket"
+                          },
+                          "/*"
+                        ]
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "WebAppCloudFrontDistribution": {
+            "Type": "AWS::CloudFront::Distribution",
+            "Properties": {
+              "DistributionConfig": {
+                "Origins": [
+                  {
+                    "DomainName": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Ref": "WebAppS3Bucket"
+                          },
+                          ".s3.amazonaws.com"
+                        ]
+                      ]
+                    },
+                    "Id": "WebApp",
+                    "CustomOriginConfig": {
+                      "HTTPPort": 80,
+                      "HTTPSPort": 443,
+                      "OriginProtocolPolicy": "https-only"
+                    }
+                  }
+                ],
+                "Enabled": true,
+                "DefaultRootObject": "index.html",
+                "CustomErrorResponses": [
+                  {
+                    "ErrorCode": 404,
+                    "ResponseCode": 200,
+                    "ResponsePagePath": "/index.html"
+                  }
+                ],
+                "DefaultCacheBehavior": {
+                  "AllowedMethods": [
+                    "DELETE",
+                    "GET",
+                    "HEAD",
+                    "OPTIONS",
+                    "PATCH",
+                    "POST",
+                    "PUT"
+                  ],
+                  "TargetOriginId": "WebApp",
+                  "ForwardedValues": {
+                    "QueryString": false,
+                    "Cookies": {
+                      "Forward": "none"
+                    }
+                  },
+                  "ViewerProtocolPolicy": "redirect-to-https"
+                },
+                "ViewerCertificate": {
+                  "CloudFrontDefaultCertificate": true
+                }
+              }
+            }
           }
         },
         "Outputs": {
@@ -462,7 +563,7 @@
           "IndexLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "IndexLambdaVersionRrsBCHIVWH0eX8mkWcXBGZolp91M5pjLRxBgJQZks"
+              "Ref": "IndexLambdaVersion71DVSbbN2wl0AEso202qjerQNSLtf8KelopDF0I8"
             }
           },
           "ServiceEndpoint": {
@@ -485,6 +586,19 @@
                   },
                   "/dev"
                 ]
+              ]
+            }
+          },
+          "WebAppS3BucketOutput": {
+            "Value": {
+              "Ref": "WebAppS3Bucket"
+            }
+          },
+          "WebAppCloudFrontDistributionOutput": {
+            "Value": {
+              "Fn::GetAtt": [
+                "WebAppCloudFrontDistribution",
+                "DomainName"
               ]
             }
           },
@@ -566,6 +680,7 @@
       "vpc": {}
     },
     "custom": {
+      "s3LocalPath": "dist/apps/clarifi/",
       "deploymentBucket": {
         "name": "clarifi-layers",
         "versioning": false,
@@ -591,6 +706,7 @@
       ]
     },
     "plugins": [
+      "serverless-single-page-app-plugin",
       "serverless-deployment-bucket",
       "serverless-layers"
     ],
@@ -663,19 +779,134 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "IndexLambdaVersionRrsBCHIVWH0eX8mkWcXBGZolp91M5pjLRxBgJQZks"
+        "versionLogicalId": "IndexLambdaVersion71DVSbbN2wl0AEso202qjerQNSLtf8KelopDF0I8"
       }
     },
     "resources": {
+      "Resources": {
+        "WebAppS3Bucket": {
+          "Type": "AWS::S3::Bucket",
+          "Properties": {
+            "AccessControl": "PublicRead",
+            "WebsiteConfiguration": {
+              "IndexDocument": "index.html",
+              "ErrorDocument": "index.html"
+            }
+          }
+        },
+        "WebAppS3BucketPolicy": {
+          "Type": "AWS::S3::BucketPolicy",
+          "Properties": {
+            "Bucket": {
+              "Ref": "WebAppS3Bucket"
+            },
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Sid": "PublicReadGetObject",
+                  "Effect": "Allow",
+                  "Principal": "*",
+                  "Action": [
+                    "s3:GetObject"
+                  ],
+                  "Resource": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:aws:s3:::",
+                        {
+                          "Ref": "WebAppS3Bucket"
+                        },
+                        "/*"
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "WebAppCloudFrontDistribution": {
+          "Type": "AWS::CloudFront::Distribution",
+          "Properties": {
+            "DistributionConfig": {
+              "Origins": [
+                {
+                  "DomainName": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        {
+                          "Ref": "WebAppS3Bucket"
+                        },
+                        ".s3.amazonaws.com"
+                      ]
+                    ]
+                  },
+                  "Id": "WebApp",
+                  "CustomOriginConfig": {
+                    "HTTPPort": 80,
+                    "HTTPSPort": 443,
+                    "OriginProtocolPolicy": "https-only"
+                  }
+                }
+              ],
+              "Enabled": true,
+              "DefaultRootObject": "index.html",
+              "CustomErrorResponses": [
+                {
+                  "ErrorCode": 404,
+                  "ResponseCode": 200,
+                  "ResponsePagePath": "/index.html"
+                }
+              ],
+              "DefaultCacheBehavior": {
+                "AllowedMethods": [
+                  "DELETE",
+                  "GET",
+                  "HEAD",
+                  "OPTIONS",
+                  "PATCH",
+                  "POST",
+                  "PUT"
+                ],
+                "TargetOriginId": "WebApp",
+                "ForwardedValues": {
+                  "QueryString": false,
+                  "Cookies": {
+                    "Forward": "none"
+                  }
+                },
+                "ViewerProtocolPolicy": "redirect-to-https"
+              },
+              "ViewerCertificate": {
+                "CloudFrontDefaultCertificate": true
+              }
+            }
+          }
+        }
+      },
       "Outputs": {
+        "WebAppS3BucketOutput": {
+          "Value": {
+            "Ref": "WebAppS3Bucket"
+          }
+        },
+        "WebAppCloudFrontDistributionOutput": {
+          "Value": {
+            "Fn::GetAtt": [
+              "WebAppCloudFrontDistribution",
+              "DomainName"
+            ]
+          }
+        },
         "ClarifiDashapiDashdevDashnodejsDashindexLambdaLayerQualifiedArn": {
           "Value": "arn:aws:lambda:us-east-1:622192328085:layer:clarifi-api-dev-nodejs-index:1",
           "Export": {
             "Name": "ClarifiDashapiDashdevDashnodejsDashindexLambdaLayerQualifiedArn"
           }
         }
-      },
-      "Resources": {}
+      }
     },
     "serviceFilename": "serverless.yml",
     "layers": {},
@@ -683,7 +914,7 @@
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/clarifi-api/dev/1632490835059-2021-09-24T13:40:35.059Z",
+    "artifactDirectoryName": "serverless/clarifi-api/dev/1632499610683-2021-09-24T16:06:50.683Z",
     "artifact": ""
   }
 }

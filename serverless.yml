@@ -7,6 +7,7 @@ provider:
   profile: personal
 
 plugins:
+  - serverless-single-page-app-plugin
   - serverless-deployment-bucket
   - serverless-layers
 
@@ -19,6 +20,7 @@ package:
 
 
 custom:
+  s3LocalPath: dist/apps/clarifi
   deploymentBucket:
     name: clarifi-layers
     versioning: false
@@ -48,3 +50,18 @@ functions:
         cors: true
         path: '{proxy+}'
         method: any
+
+resources:
+  Resources:
+    WebAppS3Bucket: ${file(resources/clarifi/webapp-bucket.yml)}
+    WebAppS3BucketPolicy: ${file(resources/clarifi/webapp-bucket-policy.yml)}
+    WebAppCloudFrontDistribution: ${file(resources/clarifi/webapp-bucket-cloudfront.yml)}
+
+  ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
+  Outputs:
+    WebAppS3BucketOutput:
+      Value:
+        'Ref': WebAppS3Bucket
+    WebAppCloudFrontDistributionOutput:
+      Value:
+        'Fn::GetAtt': [ WebAppCloudFrontDistribution, DomainName ]
