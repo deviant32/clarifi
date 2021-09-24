@@ -4,15 +4,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: us-east-1
-  deploymentBucket:
-    name: clarifi-deployment
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:GetObject
-      Resource: "*"
-
+  profile: personal
 
 plugins:
   - serverless-deployment-bucket
@@ -26,13 +18,22 @@ package:
     - '**'
 
 
-
 custom:
-  prune:
-    automatic: true
-    number: 3
+  deploymentBucket:
+    name: clarifi-layers
+    versioning: false
+    accelerate: true
+    blockPublicAccess: true
+    tags:
+      - Key: Environment
+        Value: ${opt:stage, 'dev'}
+
   serverless-layers:
-    dependenciesPath: dist/apps/api/package.json
+    - index:
+        functions:
+          - index
+        layersDeploymentBucket: clarifi-layers
+        dependenciesPath: dist/apps/api/package.json
 
 
 functions:
