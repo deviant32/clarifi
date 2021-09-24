@@ -9,5 +9,5 @@ import { Message } from '@quadrant-biosciences/api-interfaces';
 })
 export class AppComponent {
   hello$ = this.http.get<Message>('/api/hello');
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 }
