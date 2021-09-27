@@ -1,0 +1,10 @@
+DependsOn: DBSecret
+Type: AWS::RDS::DBInstance
+Properties:
+  DBInstanceClass: db.t3.micro
+  MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:username}}' ]]
+  MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBSecret, ':SecretString:password}}' ]]
+  AllocatedStorage: 20
+  Engine: mysql
+  PubliclyAccessible: true
+  EnablePerformanceInsights: false
