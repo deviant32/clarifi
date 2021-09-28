@@ -1,15 +1,14 @@
+import { User } from '.prisma/client';
 import { Controller, Get } from '@nestjs/common';
 
-import { Message } from '@quadrant-biosciences/api-interfaces';
-
-import { AppService } from './app.service';
+import { PrismaService } from './services/prisma/prisma.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private prismaService: PrismaService) { }
 
-  @Get('hello')
-  getData(): Message {
-    return this.appService.getData();
+  @Get('users')
+  async getUsers(): Promise<User[]> {
+    return await this.prismaService.user.findMany();
   }
 }

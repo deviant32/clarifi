@@ -53,9 +53,9 @@ functions:
 resources:
   Resources:
     # Angular app
-    WebAppS3Bucket: ${file(resources/clarifi/webapp-bucket.yml)}
-    WebAppS3BucketPolicy: ${file(resources/clarifi/webapp-bucket-policy.yml)}
-    WebAppCloudFrontDistribution: ${file(resources/clarifi/webapp-bucket-cloudfront.yml)}
+    WebAppS3Bucket: ${file(resources/frontend/webapp-bucket.yml)}
+    WebAppS3BucketPolicy: ${file(resources/frontend/webapp-bucket-policy.yml)}
+    WebAppCloudFrontDistribution: ${file(resources/frontend/webapp-bucket-cloudfront.yml)}
 
     # RDS Username / Password
     DBSecret: ${file(resources/rds/db-secret.yml)}
