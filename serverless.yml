@@ -36,6 +36,7 @@ custom:
           - index
         layersDeploymentBucket: clarifi-layers
         dependenciesPath: dist/apps/api/package.json
+        excludeDevDependencies: true
 
 functions:
   index:
