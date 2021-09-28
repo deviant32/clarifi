@@ -18,6 +18,7 @@ package:
     - dist/apps/api/**
   exclude:
     - '**'
+  excludeDevDependencies: true
 
 custom:
   s3LocalPath: dist/apps/clarifi
@@ -36,7 +37,6 @@ custom:
           - index
         layersDeploymentBucket: clarifi-layers
         dependenciesPath: dist/apps/api/package.json
-        excludeDevDependencies: true
 
 functions:
   index:
