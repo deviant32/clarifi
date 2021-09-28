@@ -2,5 +2,8 @@ before_build:
   - npx nx build api
   - npx nx build clarifi
 
+after_build:
+  - npx prisma generate
+
 after_deploy:
   - sls syncToS3
